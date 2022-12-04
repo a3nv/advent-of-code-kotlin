@@ -1,56 +1,28 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        var sum = 0
-        var max = 0
-        input.forEach {
-            if (it.isBlank()) {
-                max = Math.max(max, sum)
-                sum = 0
-            } else {
-                sum += it.toInt()
-            }
+
+    fun foldIt(input: List<String>): List<Int> {
+        return input.fold(mutableListOf(0)) { acc, next ->
+            if (next.isNotBlank())  acc[acc.lastIndex] = next.toInt() + acc.last() else acc.add(0) // this is the dirst argument - operation
+            acc // this is the second argument - accumulator
         }
-        return max
+    }
+
+    fun part1(input: List<String>): Int {
+        return foldIt(input).max()
     }
 
     fun part2(input: List<String>): Int {
-        var sum = 0
-        var a = 0; var b = 0; var c = 0
-        input.forEach {
-            if (it.isBlank()) {
-                when {
-                    sum >= a -> {
-                        c = b; b = a; a = sum
-                    }
-                    sum >= b -> {
-                        c = b; b = sum
-                    }
-                    sum >= c -> c = sum
-                }
-                sum = 0
-            } else {
-                sum += it.toInt()
-            }
-        }
-        if (sum != 0) {
-            when {
-                sum >= a -> {
-                    c = b; b = a; a = sum
-                }
-                sum >= b -> {
-                    c = b; b = sum
-                }
-                sum >= c -> c = sum
-            }
-        }
-        return a + b + c
+        return foldIt(input).sorted().takeLast(3).sum()
     }
+
 
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day01_test")
     check(part1(testInput) == 24000)
     check(part2(testInput) == 45000)
+    println(part1(testInput))
+    println(part2(testInput))
 
     val input = readInput("Day01")
     check(part1(input) == 68787)
