@@ -2,7 +2,7 @@ fun main() {
 
     fun foldIt(input: List<String>): List<Int> {
         return input.fold(mutableListOf(0)) { acc, next ->
-            if (next.isNotBlank())  acc[acc.lastIndex] = next.toInt() + acc.last() else acc.add(0) // this is the dirst argument - operation
+            if (next.isNotBlank())  acc[acc.lastIndex] = next.toInt() + acc.last() else acc.add(0) // this is the first argument - operation
             acc // this is the second argument - accumulator
         }
     }
