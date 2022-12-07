@@ -13,8 +13,8 @@ fun main() {
 
 
     val input = readInput("Day06")
-    val findMarker = findMarker(input.get(0), 4)
-    val message = findMarker(input.get(0), 14)
+    val findMarker = findMarker(input[0], 4)
+    val message = findMarker(input[0], 14)
     println(findMarker)
     println(message)
     check(findMarker == 1760)
