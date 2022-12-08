@@ -1,9 +1,13 @@
 fun main() {
 
-    fun part1(input: List<String>): Int {
-        var currentFolder: Folder? = Folder(input.first().last().toString()) // when starts with cd replace folder with new folder
-        var map = mutableMapOf(input.first().last().toString() to currentFolder)
-        var subFolders = mutableListOf<String>() // when cd into new folder replace with new list
+    var currentFolder: Folder?
+    var map: MutableMap<String, Folder?> = mutableMapOf()
+    var subFolders: MutableList<String>
+
+    fun parse(input: List<String>) {
+        currentFolder = Folder(input.first().last().toString()) // when starts with cd replace folder with new folder
+        map = mutableMapOf(input.first().last().toString() to currentFolder)
+        subFolders = mutableListOf() // when cd into new folder replace with new list
         currentFolder?.subFolders = subFolders
         input.drop(1).forEach {
             when {
@@ -46,6 +50,10 @@ fun main() {
             val subFolder = map[it]
             parent?.size = subFolder?.size?.plus(parent?.size!!)!!
         }
+    }
+
+    fun part1(input: List<String>): Int {
+        parse(input)
         var sum = 0
         map.filter{it.key != "/" && it.value?.size!! <= 100000 }.forEach {
             sum += it.value?.size!!
@@ -54,7 +62,12 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return -1
+        parse(input)
+        return map
+            .filter { it.key != "/" }
+            .map { it.value?.size!! }
+            .sorted()
+            .first { it > 70000000 - map["/"]?.size!! }
     }
 
 
@@ -63,14 +76,14 @@ fun main() {
     val testInput = readInput("Day07_test")
     println(part1(testInput))
     check(part1(testInput) == 95437)
-//    println(part2(testInput))
-//    check(part2(testInput) == 45000)
+    println(part2(testInput))
+    check(part2(testInput) == 24933642)
 
-//    val input = readInput("Day07")
-//    println(part1(input))
-//    check(part1(input) == 68787)
-//    println(part2(input))
-//    check(part2(input) == 198041)
+    val input = readInput("Day07")
+    println(part1(input))
+    check(part1(input) == 2031851)
+    println(part2(input))
+    check(part2(input) == 2568781)
 }
 
 fun isFile(line: String): Boolean {
@@ -92,5 +105,7 @@ fun isDir(line: String): Boolean {
 fun isLs(line: String): Boolean {
     return line.contains("ls")
 }
+
+
 
 class Folder(var name: String, var parent: Folder? = null, var subFolders: MutableList<String> = mutableListOf(), var size: Int = 0)
