@@ -1,76 +1,69 @@
+import java.util.function.Predicate
+
 fun main() {
 
-    var currentFolder: Folder?
-    var map: MutableMap<String, Folder?> = mutableMapOf()
-    var subFolders: MutableList<String>
-
-    fun parse(input: List<String>) {
-        currentFolder = Folder(input.first().last().toString()) // when starts with cd replace folder with new folder
-        map = mutableMapOf(input.first().last().toString() to currentFolder)
-        subFolders = mutableListOf() // when cd into new folder replace with new list
-        currentFolder?.subFolders = subFolders
+    fun parse(input: List<String>): Folder {
+        val rootFolderName = input.first().split(" ")[2]
+        var currentFolder = Folder(rootFolderName)
+        val rootFolder = currentFolder
         input.drop(1).forEach {
             when {
                 isBack(it) -> {
-                    currentFolder = currentFolder?.parent
-                    currentFolder?.subFolders?.forEach {
-                        val subFolder = map[it]
-                        currentFolder?.size = subFolder?.size?.plus(currentFolder?.size!!)!!
-                    }
+                    currentFolder = currentFolder.parent!!
                 }
+
                 isCd(it) -> {
-                    val currentFolderName = it.last().toString()
-                    subFolders = mutableListOf()
-                    var folder = map[currentFolderName]
-                    if (folder == null) {
-                        folder = Folder(currentFolderName)
-                        folder.parent = currentFolder
-                        map[currentFolderName] = folder
-                    }
+                    val currentFolderName = it.split(" ")[2]
+                    val folder = currentFolder.subFolders.first { sub -> sub.name == currentFolderName }
                     currentFolder = folder
-                    currentFolder?.subFolders = subFolders
                 }
+
                 isDir(it) -> {
-                    val f = Folder(it.last().toString())
+                    val folderName = it.split(" ")[1]
+                    val f = Folder(folderName)
                     f.parent = currentFolder
-                    map[it.last().toString()] = f
-                    subFolders.add(f.name)
+                    currentFolder.subFolders.add(f)
                 }
+
                 isFile(it) -> {
                     val size = it.split(" ")[0].toInt()
-                    currentFolder?.size = size + currentFolder?.size!!
-                }
-                else -> {
-
+                    fun add(current: Folder?, size: Int) {
+                        if (current != null) {
+                            current.size += size
+                            add(current.parent, size)
+                        }
+                    }
+                    add(currentFolder, size)
                 }
             }
         }
-        val parent = map["/"]
-        parent?.subFolders?.forEach {
-            val subFolder = map[it]
-            parent?.size = subFolder?.size?.plus(parent?.size!!)!!
+        return rootFolder
+    }
+
+    fun count(root: Folder, predicate: Predicate<Folder>): List<Int> {
+        val q = mutableListOf<Folder>()
+        val result = mutableListOf<Int>()
+        q.add(root)
+        while (q.isNotEmpty()) {
+            val candidate = q.removeFirst()
+            if (predicate.test(candidate)) {
+                result.add(candidate.size)
+            }
+            q.addAll(candidate.subFolders)
         }
+        return result
     }
 
     fun part1(input: List<String>): Int {
-        parse(input)
-        var sum = 0
-        map.filter{it.key != "/" && it.value?.size!! <= 100000 }.forEach {
-            sum += it.value?.size!!
-        }
-        return sum
+        val rootFolder = parse(input)
+        return count(rootFolder) { it: Folder -> it.size <= 100000 }.sum()
     }
 
     fun part2(input: List<String>): Int {
-        parse(input)
-        return map
-            .filter { it.key != "/" }
-            .map { it.value?.size!! }
-            .sorted()
-            .first { it > 70000000 - map["/"]?.size!! }
+        val rootFolder = parse(input)
+        val required = 30000000 - (70000000 - rootFolder.size)
+        return count(rootFolder) { it: Folder -> it.size >= required }.min()
     }
-
-
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day07_test")
@@ -91,21 +84,20 @@ fun isFile(line: String): Boolean {
 }
 
 fun isCd(line: String): Boolean {
-    return line.contains("cd")
+    return line.startsWith("\$ cd")
 }
 
 fun isBack(line: String): Boolean {
-    return line.contains("cd ..")
+    return line == "\$ cd .."
 }
 
 fun isDir(line: String): Boolean {
     return line.startsWith("dir")
 }
 
-fun isLs(line: String): Boolean {
-    return line.contains("ls")
-}
-
-
-
-class Folder(var name: String, var parent: Folder? = null, var subFolders: MutableList<String> = mutableListOf(), var size: Int = 0)
+class Folder(
+    var name: String,
+    var parent: Folder? = null,
+    var subFolders: MutableList<Folder> = mutableListOf(),
+    var size: Int = 0
+)
