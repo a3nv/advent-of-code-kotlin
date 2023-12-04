@@ -1,3 +1,7 @@
+package y2022
+
+import utils.readInput
+
 fun main() {
 
     fun getGame(choice: String): Choice {
@@ -40,13 +44,13 @@ fun main() {
 
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day02_test")
+    val testInput = readInput("y2022", "Day02_test")
     println(part1(testInput))
     check(part1(testInput) == 15)
     println(part2(testInput))
     check(part2(testInput) == 12)
 
-    val input = readInput("Day02")
+    val input = readInput("y2022", "Day02")
     println(part1(input))
     check(part1(input) == 15337)
     println(part2(input))

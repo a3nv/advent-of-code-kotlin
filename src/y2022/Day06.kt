@@ -1,3 +1,7 @@
+package y2022
+
+import utils.readInput
+
 fun main() {
 
     check(findMarker("bvwbjplbgvbhsrlpgdmjqwftvncz", 4) == 5)
@@ -12,7 +16,7 @@ fun main() {
     check(findMarker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 14) == 26)
 
 
-    val input = readInput("Day06")
+    val input = readInput("y2022", "Day06")
     val findMarker = findMarker(input[0], 4)
     val message = findMarker(input[0], 14)
     println(findMarker)

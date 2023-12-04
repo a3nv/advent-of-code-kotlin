@@ -1,3 +1,7 @@
+package y2022
+
+import utils.readInput
+
 fun main() {
 
     fun foldIt(input: List<String>): List<Int> {
@@ -18,13 +22,13 @@ fun main() {
 
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
+    val testInput = readInput("y2022","Day01_test")
     check(part1(testInput) == 24000)
     check(part2(testInput) == 45000)
     println(part1(testInput))
     println(part2(testInput))
 
-    val input = readInput("Day01")
+    val input = readInput("y2022","Day01")
     check(part1(input) == 68787)
     check(part2(input) == 198041)
     println(part1(input))

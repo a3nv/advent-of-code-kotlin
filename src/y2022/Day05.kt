@@ -1,3 +1,6 @@
+package y2022
+
+import utils.readInput
 
 fun main() {
 
@@ -35,7 +38,7 @@ fun main() {
 
 
     // test if implementation meets criteria from the description, like:
-    var input = readInput("Day05_test_full")
+    var input = readInput("y2022", "Day05_test_full")
     var pairs = parseInput(input)
     var res = part1(pairs.first, pairs.second)
     println(res)
@@ -45,7 +48,7 @@ fun main() {
     println(res)
     check(res == "MCD")
 
-    input = readInput("Day05_full")
+    input = readInput("y2022", "Day05_full")
     pairs = parseInput(input)
     res = part1(pairs.first, pairs.second)
     println(res)

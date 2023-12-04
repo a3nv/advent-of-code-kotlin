@@ -1,3 +1,6 @@
+package y2022
+
+import utils.readInput
 import java.util.function.Predicate
 
 fun main() {
@@ -66,13 +69,13 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day07_test")
+    val testInput = readInput("y2022", "Day07_test")
     println(part1(testInput))
     check(part1(testInput) == 95437)
     println(part2(testInput))
     check(part2(testInput) == 24933642)
 
-    val input = readInput("Day07")
+    val input = readInput("y2022", "Day07")
     println(part1(input))
     check(part1(input) == 2031851)
     println(part2(input))
