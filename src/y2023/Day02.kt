@@ -36,8 +36,29 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-
-        return 0
+        var sumOfPowers = 0
+        input.forEach { gameString ->
+            val gameData = gameString.split("Game")
+            gameData.filter { it.isNotBlank() }.forEach { game ->
+                val gameSets = game.substringAfter(":").split(";")
+                val max = mutableMapOf<String, Int>()
+                gameSets.forEach { set ->
+                    set.split(",").forEach { cubes: String ->
+                        val cube: List<String> = cubes.split("\\s+".toRegex()).filter { it.isNotBlank() }
+                        val color: String = cube.last()
+                        val count: Int = cube.first().toInt()
+                        if (!max.containsKey(color) || max[color]!! < count) {
+                            max[color] = count
+                        }
+                    }
+                }
+                val reduce = max.values.reduce { acc, i -> acc * i }
+                println("Reduced: $reduce")
+                sumOfPowers += reduce
+            }
+        }
+        println("Sum of powers: $sumOfPowers")
+        return sumOfPowers
     }
 
 
@@ -45,13 +66,12 @@ fun main() {
     var testInput = readInput("y2023", "Day02_test_part1")
     check(part1(testInput) == 8)
     println(part1(testInput))
-//    testInput = readInput("y2023", "Day01_test_part2")
-//    check(part2(testInput) == 281)
-//    println(part2(testInput))
+    check(part2(testInput) == 2286)
+    println(part2(testInput))
 
     val input = readInput("y2023", "Day02")
     check(part1(input) == 2563)
     println(part1(input))
-//    check(part2(input) == 53894)
-//    println(part2(input))
+    check(part2(input) == 70768)
+    println(part2(input))
 }
