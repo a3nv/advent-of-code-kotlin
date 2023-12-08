@@ -17,7 +17,7 @@ fun main() {
                 val playerHand = data.substringAfter("|").trim()
                     .split(" ").filter { it.isNotBlank() }.toSet()
                 val count = winners.intersect(playerHand).count()
-                println("Winners $winners --> player $playerHand = ${winners.intersect(playerHand)}")
+//                println("Winners $winners --> player $playerHand = ${winners.intersect(playerHand)}")
                 sum += 1 shl (count - 1)
             }
         }
@@ -25,8 +25,26 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
+        val map = mutableMapOf<Int, Int>()
+        input.forEach { card ->
+            val cardData = card.split("Card")
+            cardData.filter { it.isNotBlank()}.forEach { data ->
+                val cardNumber = data.substringBefore(":").trim().toInt()
+                map[cardNumber] = map.getOrDefault(cardNumber, 0) + 1
+                val dataSets = data.substringAfter(": ").trim()
+                val winners = dataSets.substringBefore("|").trim()
+                    .split(" ").filter { it.isNotBlank() }.toSet()
+                val playerHand = dataSets.substringAfter("|").trim()
+                    .split(" ").filter { it.isNotBlank() }.toSet()
+                val count = winners.intersect(playerHand).count()
+//                println("Winners $winners --> player $playerHand = ${winners.intersect(playerHand)}")
+                for (i in 1 .. count ) {
+                    map[cardNumber + i] = map.getOrDefault(cardNumber + i, 0) + (map[cardNumber] ?: 1)
+                }
+            }
+        }
+        return map.values.sum()
 
-        return 0
     }
 
 
@@ -34,12 +52,12 @@ fun main() {
     var testInput = readInput("y2023", "Day04_test_part1")
     println(part1(testInput))
     check(part1(testInput) == 13)
-//    check(part2(testInput) == 2286)
-//    println(part2(testInput))
+    println(part2(testInput))
+    check(part2(testInput) == 30)
 
     val input = readInput("y2023", "Day04")
-//    check(part1(input) == 2563)
+    check(part1(input) == 20407)
     println(part1(input))
-//    check(part2(input) == 70768)
-//    println(part2(input))
+    check(part2(input) == 23806951)
+    println(part2(input))
 }
