@@ -1,67 +1,88 @@
 package y2023
 
 import utils.readInput
-import java.math.BigInteger
-
-data class Mapping(val source: BigInteger, val step: BigInteger, val destination: BigInteger)
-
-val order = listOf(
-    "seed-to-soil",
-    "soil-to-fertilizer",
-    "fertilizer-to-water",
-    "water-to-light",
-    "light-to-temperature",
-    "temperature-to-humidity",
-    "humidity-to-location"
-)
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
-        val maps = mutableMapOf<String, MutableList<Mapping>>()
-        val seeds = input.first().split("seeds: ")[1].split(" ").map { it.toBigInteger() }
-        var currentCategory = ""
-        input.drop(1).forEach {line ->
-            when {
-                line.endsWith("map:") -> currentCategory = line.split(" map:")[0]
-                line.isNotBlank() -> {
-                    val parts = line.split(" ").map { it.toBigInteger() }
-                    maps.getOrPut(currentCategory) { mutableListOf() }.add(Mapping(parts[1], parts[2], parts[0]))
-                }
-            }
-        }
-
-        val res = mutableListOf<BigInteger>()
-        seeds.forEach { seed ->
-            var source = seed
-            order.forEach { mappingName ->
-                val mapping: List<Mapping> = maps[mappingName]!!
-                val matchedMapping = mapping.firstOrNull {
-                    currentMapping -> source >= currentMapping.source && source <= currentMapping.source + currentMapping.step
-                }
-                source = matchedMapping?.destination?.plus((source - matchedMapping.source)) ?: source
-            }
-            res.add(source)
-        }
-        return res.minOrNull()!!.toInt()
+    fun List<Long>.toPairs(): List<Pair<Long, Long>> {
+        return this.chunked(size = 2) { it[0] to it[1] }
     }
 
-    fun part2(input: List<String>): Int {
+    fun part1(input: List<String>): Long? {
+        val seeds = input.first().split("seeds: ")[1].split(" ").map { it.toLong() }
+        val mappings = mutableListOf<MutableList<Pair<LongRange, Long>>>()
+        input.drop(1).forEach { line ->
+            when {
+                line.endsWith("map:") -> {
+                    mappings.add(mutableListOf())
+                }
 
-        return 0
+                line.isNotBlank() -> {
+                    val (dest, src, size) = line.split(" ").map { it.toLong() }
+                    mappings.last().add(src..src + size to dest - src)
+                }
+            }
+        }
+        val minOf = seeds.minOf { seed ->
+            mappings.fold(seed) { accumulator, mappings ->
+                val match = mappings.firstOrNull { it.first.contains(accumulator) }
+                if (match == null) accumulator else accumulator + match.second
+            }
+        }
+        return minOf
+    }
+
+
+    fun part2(input: List<String>): Long {
+        val seeds = input.first().split("seeds: ")[1].split(" ")
+            .map { it.toLong() }
+            .toPairs()
+        val mappings = mutableListOf<MutableMap<LongRange, (Long) -> Long>>()
+        input.drop(1).forEach { line ->
+            when {
+                line.endsWith("map:") -> mappings.add(mutableMapOf())
+                line.isNotBlank() -> {
+                    val (dest, src, size) = line.split(" ").map { it.toLong() }
+                    val range = src until src + size
+                    val f = { x: Long -> dest + (x - src) }
+                    mappings.last()[range] = f
+                }
+            }
+        }
+
+        fun mapValue(value: Long, mappings: List<Map<LongRange, (Long) -> Long>>): Long {
+            var result = value
+            for (mapping in mappings) {
+                val f = mapping.keys.firstOrNull { it.contains(result) }?.let { longRange -> mapping[longRange] }
+                result = f?.invoke(result) ?: result
+            }
+            return result
+        }
+
+        val minOf = seeds.minOfOrNull { seed ->
+            var minValue = Long.MAX_VALUE
+            for (value in seed.first..seed.first + seed.second) {
+                val mapped = mapValue(value, mappings)
+                if (mapped < minValue) {
+                    minValue = mapped
+                }
+            }
+            minValue
+        } ?: Long.MAX_VALUE
+        return minOf
     }
 
 
     // test if implementation meets criteria from the description, like:
     var testInput = readInput("y2023", "Day05_test_part1")
-    println(part1(testInput))
-    check(part1(testInput) == 35)
+//        println(part1(testInput))
+//    check(part1(testInput) == 35)
+    println(part2(testInput))
 //    check(part2(testInput) == 2286)
-//    println(part2(testInput))
 
     val input = readInput("y2023", "Day05")
 //    check(part1(input) == 2563)
-    println(part1(input))
+//        println(part1(input))
 //    check(part2(input) == 70768)
-//    println(part2(input))
+    println(part2(input))
 }
