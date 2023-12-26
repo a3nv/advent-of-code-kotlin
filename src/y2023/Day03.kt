@@ -12,8 +12,8 @@ fun main() {
         val neighbours = mutableListOf<Pair<Int, Int>>();
         val directions = listOf(
             -1 to -1, -1 to 0, -1 to 1,
-            0 to -1, 0 to 1,
-            1 to -1, 1 to 0, 1 to 1
+             0 to -1,           0 to 1,
+             1 to -1,  1 to 0,  1 to 1
         )
         for (dir in directions) {
             val newRow = row + dir.first
