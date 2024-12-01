@@ -1,6 +1,6 @@
 package y2023
 
-import utils.readInput
+import readInput
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt

@@ -1,6 +1,6 @@
 package y2023
 
-import utils.readInput
+import readInput
 
 
 val WEIGHTS = "23456789TJQKA".mapIndexed { index, it -> it to index + 2 }.toMap()

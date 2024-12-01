@@ -1,6 +1,6 @@
 package y2023
 
-import utils.readInput
+import readInput
 
 
 fun main() {

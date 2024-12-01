@@ -1,6 +1,6 @@
 package y2022
 
-import utils.readInput
+import readInput
 import java.util.function.Predicate
 
 fun main() {
