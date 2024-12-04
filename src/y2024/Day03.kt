@@ -6,8 +6,6 @@ import kotlin.math.abs
 
 fun main() {
 
-
-
     fun part1(input: List<String>): Int {
         val regex = Regex("""mul\((\d{1,3}),(\d{1,3})\)""")
         val matchers = regex.findAll(input.joinToString("\n"))
